@@ -19,5 +19,5 @@ public enum PoolingType
     /// <summary>
     ///     In each given patch, take the largest value
     /// </summary>
-    MaxPooling = 1
+    MaxPooling = 1,
 }

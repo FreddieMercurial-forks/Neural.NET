@@ -69,10 +69,13 @@ public class FullyConnectedNetwork
             item: new FullyConnectedLayerInformation {NodeCount = nodeCount, ActivationFunction = activationFunction});
         if (this.LayerInformation.Count > 1)
         {
-            this.Biases.Add(item: Vector<double>.Build.Random(length: nodeCount, distribution: new Normal(mean: 0.0, stddev: 1.0)));
+            this.Biases.Add(item: Vector<double>.Build.Random(length: nodeCount,
+                distribution: new Normal(mean: 0.0,
+                    stddev: 1.0)));
             this.Weights.Add(item: Matrix<double>.Build.Random(rows: nodeCount,
                 columns: this.LayerInformation[index: this.LayerCount].NodeCount,
-                distribution: new Normal(mean: 0.0, stddev: 1.0)));
+                distribution: new Normal(mean: 0.0,
+                    stddev: 1.0)));
         }
     }
 
@@ -106,16 +109,20 @@ public class FullyConnectedNetwork
         switch (activationFunction)
         {
             case NonLinearFunction.Sigmoid:
-                return NonLinearTransformations.Sigmoid(vector: activation, derivative: derivative);
+                return NonLinearTransformations.Sigmoid(vector: activation,
+                    derivative: derivative);
 
             case NonLinearFunction.Tanh:
-                return NonLinearTransformations.Tanh(vector: activation, derivative: derivative);
+                return NonLinearTransformations.Tanh(vector: activation,
+                    derivative: derivative);
 
             case NonLinearFunction.ReLU:
-                return NonLinearTransformations.ReLU(vector: activation, derivative: derivative);
+                return NonLinearTransformations.ReLU(vector: activation,
+                    derivative: derivative);
 
             case NonLinearFunction.LReLU:
-                return NonLinearTransformations.LReLU(vector: activation, derivative: derivative);
+                return NonLinearTransformations.LReLU(vector: activation,
+                    derivative: derivative);
 
             default:
                 return null;

@@ -34,5 +34,5 @@ internal enum LayerType
     /// <summary>
     ///     A layer of fully connected neurons
     /// </summary>
-    FullyConnected = 4
+    FullyConnected = 4,
 }

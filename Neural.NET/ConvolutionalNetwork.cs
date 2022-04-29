@@ -65,13 +65,16 @@ public class ConvolutionalNetwork
         var _flattenedFilters = new List<Matrix<double>>(capacity: filterCount);
         for (var i = 0; i < filterCount; i++)
         {
-            _flattenedFilters.Add(item: Matrix<double>.Build.Random(rows: _previousDimensions, columns: (int)Math.Pow(x: kernelSize, y: 2),
-                distribution: new Normal(mean: 0.0, stddev: 1.0)));
+            _flattenedFilters.Add(item: Matrix<double>.Build.Random(rows: _previousDimensions,
+                columns: (int)Math.Pow(x: kernelSize,
+                    y: 2),
+                distribution: new Normal(mean: 0.0,
+                    stddev: 1.0)));
         }
 
         this.LayerInformation.Add(item: new ConvolutionalLayerInformation
         {
-            FilterCount = filterCount, Stride = stride, KernelSize = kernelSize, FlattenedFilters = _flattenedFilters
+            FilterCount = filterCount, Stride = stride, KernelSize = kernelSize, FlattenedFilters = _flattenedFilters,
         });
     }
 
@@ -83,7 +86,8 @@ public class ConvolutionalNetwork
     /// <param name="activationFunction">The activation function to use in this layer.</param>
     public void AddFullyConnectedLayer(int nodeCount, NonLinearFunction activationFunction = NonLinearFunction.Sigmoid)
     {
-        this.FullyConnectedNetwork.AddLayer(nodeCount: nodeCount, activationFunction: activationFunction);
+        this.FullyConnectedNetwork.AddLayer(nodeCount: nodeCount,
+            activationFunction: activationFunction);
     }
 
     /// <summary>
@@ -108,7 +112,7 @@ public class ConvolutionalNetwork
     {
         this.LayerInformation.Add(item: new PoolingLayerInformation
         {
-            KernelSize = poolingDimension, PoolingType = poolingType, Stride = stride
+            KernelSize = poolingDimension, PoolingType = poolingType, Stride = stride,
         });
     }
 
@@ -127,17 +131,20 @@ public class ConvolutionalNetwork
             {
                 case LayerType.Convolutional:
                     var _convInfo = _layerInformation as ConvolutionalLayerInformation;
-                    _currentImages = this.Convolve(layerInfo: _convInfo, inputImages: _currentImages);
+                    _currentImages = this.Convolve(layerInfo: _convInfo,
+                        inputImages: _currentImages);
                     break;
 
                 case LayerType.Pooling:
                     var _poolInfo = _layerInformation as PoolingLayerInformation;
-                    _currentImages = this.Pool(layerInfo: _poolInfo, inputImages: _currentImages);
+                    _currentImages = this.Pool(layerInfo: _poolInfo,
+                        inputImages: _currentImages);
                     break;
 
                 case LayerType.NonLinear:
                     var _nonLinearInfo = _layerInformation as NonLinearLayerInformation;
-                    _currentImages = this.NonLinear(layerInfo: _nonLinearInfo, inputImages: _currentImages);
+                    _currentImages = this.NonLinear(layerInfo: _nonLinearInfo,
+                        inputImages: _currentImages);
                     break;
             }
         }
@@ -161,10 +168,11 @@ public class ConvolutionalNetwork
         // Construct out return matrix that will include all layers of our images.
         Matrix<double> _outputImages = null;
 
-        foreach (Tuple<int, Vector<double>> _imageDimensionAndIndex in inputImages.EnumerateRowsIndexed())
+        foreach ((int, Vector<double>) _imageDimensionAndIndex in inputImages.EnumerateRowsIndexed())
         {
             // Create the matrix so we can do all of the convolutions at once.
-            var _preConvolutionMap = this.CreateMaskingMap(kernelSideLength: layerInfo.KernelSize, strideSize: layerInfo.Stride,
+            var _preConvolutionMap = this.CreateMaskingMap(kernelSideLength: layerInfo.KernelSize,
+                strideSize: layerInfo.Stride,
                 startingImage: _imageDimensionAndIndex.Item2);
 
             var _filtersForThisDimension =
@@ -180,7 +188,9 @@ public class ConvolutionalNetwork
             // Create the result image matrix if it's not created yet
             if (_outputImages == null)
             {
-                _outputImages = CreateMatrix.Dense(rows: layerInfo.FilterCount, columns: _preConvolutionMap.ColumnCount, value: 0.0);
+                _outputImages = CreateMatrix.Dense(rows: layerInfo.FilterCount,
+                    columns: _preConvolutionMap.ColumnCount,
+                    value: 0.0);
             }
 
             // Store off the result of our filters multiplied by our map. This ends up being every filter passing over
@@ -209,15 +219,18 @@ public class ConvolutionalNetwork
     {
         var _imageSideDimension = (int)Math.Sqrt(d: startingImage.Count);
         var _endingImageSideDimension = ((_imageSideDimension - kernelSideLength) / strideSize) + 1;
-        var _result = CreateMatrix.Dense<double>(rows: (int)Math.Pow(x: kernelSideLength, y: 2),
-            columns: (int)Math.Pow(x: _endingImageSideDimension, y: 2));
+        var _result = CreateMatrix.Dense<double>(rows: (int)Math.Pow(x: kernelSideLength,
+                y: 2),
+            columns: (int)Math.Pow(x: _endingImageSideDimension,
+                y: 2));
 
         for (var i = 0; i < _endingImageSideDimension; i += strideSize)
         {
             for (var j = 0; j < _endingImageSideDimension; j += strideSize)
             {
                 var _arrayIndex = (i * _imageSideDimension) + j;
-                var _dataPatch = Vector<double>.Build.Sparse(size: (int)Math.Pow(x: kernelSideLength, y: 2));
+                var _dataPatch = Vector<double>.Build.Sparse(size: (int)Math.Pow(x: kernelSideLength,
+                    y: 2));
                 for (var k = 0; k < kernelSideLength; k++)
                 {
                     for (var m = 0; m < kernelSideLength; m++)
@@ -226,7 +239,8 @@ public class ConvolutionalNetwork
                     }
                 }
 
-                _result.SetColumn(columnIndex: j + (i * _endingImageSideDimension), column: _dataPatch);
+                _result.SetColumn(columnIndex: j + (i * _endingImageSideDimension),
+                    column: _dataPatch);
             }
         }
 
@@ -275,17 +289,20 @@ public class ConvolutionalNetwork
     {
         Matrix<double> _preConvolutionMap = null;
         var _outputImages = CreateMatrix.Dense<double>(rows: inputImages.RowCount,
-            columns: (int)Math.Pow(x: ((Math.Sqrt(d: inputImages.ColumnCount) - layerInfo.KernelSize) / layerInfo.Stride) + 1, y: 2));
+            columns: (int)Math.Pow(x: ((Math.Sqrt(d: inputImages.ColumnCount) - layerInfo.KernelSize) / layerInfo.Stride) + 1,
+                y: 2));
 
         for (var i = 0; i < inputImages.RowCount; i++)
         {
-            _preConvolutionMap = this.CreateMaskingMap(kernelSideLength: layerInfo.KernelSize, strideSize: layerInfo.Stride,
+            _preConvolutionMap = this.CreateMaskingMap(kernelSideLength: layerInfo.KernelSize,
+                strideSize: layerInfo.Stride,
                 startingImage: inputImages.Row(index: i));
 
             switch (layerInfo.PoolingType)
             {
                 case PoolingType.MaxPooling:
-                    _outputImages.SetRow(rowIndex: i, row: _preConvolutionMap.ColumnNorms(norm: double.PositiveInfinity));
+                    _outputImages.SetRow(rowIndex: i,
+                        row: _preConvolutionMap.ColumnNorms(norm: double.PositiveInfinity));
                     break;
             }
         }

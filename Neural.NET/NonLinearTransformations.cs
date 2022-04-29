@@ -25,10 +25,12 @@ internal static class NonLinearTransformations
         // LReLU is x => x > 0 ? x : .01
         if (derivative)
         {
-            return vector.Map(f: x => x > 0 ? 1.0 : 0.0, zeros: Zeros.Include);
+            return vector.Map(f: x => x > 0 ? 1.0 : 0.0,
+                zeros: Zeros.Include);
         }
 
-        return vector.Map(f: x => x > 0 ? x : 0.01, zeros: Zeros.Include);
+        return vector.Map(f: x => x > 0 ? x : 0.01,
+            zeros: Zeros.Include);
     }
 
     /// <summary>
@@ -43,10 +45,12 @@ internal static class NonLinearTransformations
         // LReLU is x => x > 0 ? x : 0.01
         if (derivative)
         {
-            return matrix.Map(f: x => x > 0 ? 1.0 : 0.0, zeros: Zeros.Include);
+            return matrix.Map(f: x => x > 0 ? 1.0 : 0.0,
+                zeros: Zeros.Include);
         }
 
-        return matrix.Map(f: x => x > 0 ? x : 0.01, zeros: Zeros.Include);
+        return matrix.Map(f: x => x > 0 ? x : 0.01,
+            zeros: Zeros.Include);
     }
 
     /// <summary>
@@ -61,10 +65,12 @@ internal static class NonLinearTransformations
         // ReLU is x => x > 0 ? x : 0
         if (derivative)
         {
-            return vector.Map(f: x => x > 0 ? 1.0 : 0.0, zeros: Zeros.Include);
+            return vector.Map(f: x => x > 0 ? 1.0 : 0.0,
+                zeros: Zeros.Include);
         }
 
-        return vector.Map(f: x => x > 0 ? x : 0, zeros: Zeros.Include);
+        return vector.Map(f: x => x > 0 ? x : 0,
+            zeros: Zeros.Include);
     }
 
     /// <summary>
@@ -79,10 +85,12 @@ internal static class NonLinearTransformations
         // ReLU is x => x > 0 ? x : 0
         if (derivative)
         {
-            return matrix.Map(f: x => x > 0 ? 1.0 : 0.0, zeros: Zeros.Include);
+            return matrix.Map(f: x => x > 0 ? 1.0 : 0.0,
+                zeros: Zeros.Include);
         }
 
-        return matrix.Map(f: x => x > 0 ? x : 0.0, zeros: Zeros.Include);
+        return matrix.Map(f: x => x > 0 ? x : 0.0,
+            zeros: Zeros.Include);
     }
 
     /// <summary>
@@ -101,7 +109,8 @@ internal static class NonLinearTransformations
         }
 
         //vector.Map(x => ((1.0 / (1.0 + Math.Exp(-x))) * (1 - (1.0 / (1.0 + Math.Exp(-x))))), Zeros.Include) :
-        return vector.Map(f: x => 1.0 / (1.0 + Math.Exp(d: -x)), zeros: Zeros.Include);
+        return vector.Map(f: x => 1.0 / (1.0 + Math.Exp(d: -x)),
+            zeros: Zeros.Include);
     }
 
     /// <summary>
@@ -119,7 +128,8 @@ internal static class NonLinearTransformations
             return _sigmoid.PointwiseMultiply(other: _sigmoid.SubtractFrom(scalar: 1));
         }
 
-        return matrix.Map(f: x => 1.0 / (1.0 + Math.Exp(d: -x)), zeros: Zeros.Include);
+        return matrix.Map(f: x => 1.0 / (1.0 + Math.Exp(d: -x)),
+            zeros: Zeros.Include);
     }
 
     /// <summary>

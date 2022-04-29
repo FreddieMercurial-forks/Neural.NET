@@ -34,5 +34,5 @@ public enum NonLinearFunction
     /// <summary>
     ///     The leaky rectified linear unit is used as the non-linear function
     /// </summary>
-    LReLU = 4
+    LReLU = 4,
 }

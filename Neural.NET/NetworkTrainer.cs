@@ -98,7 +98,10 @@ public class NetworkTrainer
             {
                 // Copies from j to j + miniBatchSet of the training data and puts this array
                 // into the _batchCounter-th array of _batches
-                Array.Copy(sourceArray: _trainingData, sourceIndex: j, destinationArray: _batches[_batchesCounter++], destinationIndex: 0,
+                Array.Copy(sourceArray: _trainingData,
+                    sourceIndex: j,
+                    destinationArray: _batches[_batchesCounter++],
+                    destinationIndex: 0,
                     length: miniBatchSize);
             }
 
@@ -106,7 +109,8 @@ public class NetworkTrainer
             // the batch and then take the average error to update weights
             foreach (var _batch in _batches)
             {
-                this.UpdateMiniBatch(batch: _batch, learningRate: learningRate);
+                this.UpdateMiniBatch(batch: _batch,
+                    learningRate: learningRate);
             }
 
             // If we have test data, run through that now and yield the results as well as what
@@ -114,11 +118,13 @@ public class NetworkTrainer
             // of error so they still can get what epoch they are on.
             if (_testData != null)
             {
-                yield return new Tuple<int, double?>(item1: i, item2: (1 - (this.Evaluate(testData: _testData) / _sizeOfTest)) * 100);
+                yield return new Tuple<int, double?>(item1: i,
+                    item2: (1 - (this.Evaluate(testData: _testData) / _sizeOfTest)) * 100);
             }
             else
             {
-                yield return new Tuple<int, double?>(item1: i, item2: null);
+                yield return new Tuple<int, double?>(item1: i,
+                    item2: null);
             }
         }
     }
@@ -159,9 +165,11 @@ public class NetworkTrainer
         // Now to run through the network backwards instead of forward in order to do the
         // correction Since activations also holds the very first layer, it actually has
         // layerCount + 1 entries, so last is layercount, second to last is layercount - 1
-        var _delta = this.CostDerivative(actual: _activations[index: this.Network.LayerCount], expected: expectedOutput)
+        var _delta = this.CostDerivative(actual: _activations[index: this.Network.LayerCount],
+                expected: expectedOutput)
             .PointwiseMultiply(other: this.Network.RunActivation(activation: _zOutputs.Last(),
-                activationFunction: this.Network.LayerInformation.Last().ActivationFunction, derivative: true));
+                activationFunction: this.Network.LayerInformation.Last().ActivationFunction,
+                derivative: true));
         _nablaB[this.Network.LayerCount - 1] = _delta;
         _nablaW[this.Network.LayerCount - 1] =
             _delta.ToColumnMatrix().TransposeAndMultiply(other: _activations[index: this.Network.LayerCount - 1].ToColumnMatrix());
@@ -172,7 +180,8 @@ public class NetworkTrainer
         {
             _delta = this.Network.Weights[index: i + 1].TransposeThisAndMultiply(rightSide: _delta)
                 .PointwiseMultiply(other: this.Network.RunActivation(activation: _zOutputs[index: i],
-                    activationFunction: this.Network.LayerInformation[index: i].ActivationFunction, derivative: true));
+                    activationFunction: this.Network.LayerInformation[index: i].ActivationFunction,
+                    derivative: true));
             _nablaB[i] = _delta;
             _nablaW[i] = _delta.ToColumnMatrix().TransposeAndMultiply(other: _activations[index: i].ToColumnMatrix());
         }
@@ -180,11 +189,13 @@ public class NetworkTrainer
         // Do last layer
         _delta = this.Network.Weights[index: 1].TransposeThisAndMultiply(rightSide: _delta)
             .PointwiseMultiply(other: this.Network.RunActivation(activation: _zOutputs[index: 0],
-                activationFunction: this.Network.LayerInformation[index: 0].ActivationFunction, derivative: true));
+                activationFunction: this.Network.LayerInformation[index: 0].ActivationFunction,
+                derivative: true));
         _nablaB[0] = _delta;
         _nablaW[0] = _delta.ToColumnMatrix().TransposeAndMultiply(other: _activations[index: 0].ToColumnMatrix());
 
-        return new Tuple<Vector<double>[], Matrix<double>[]>(item1: _nablaB, item2: _nablaW);
+        return new Tuple<Vector<double>[], Matrix<double>[]>(item1: _nablaB,
+            item2: _nablaW);
     }
 
     /// <summary>
@@ -257,14 +268,16 @@ public class NetworkTrainer
         // Build weight nabla (del) with Zeroes
         for (var i = 0; i < this.Network.Biases.Count; i++)
         {
-            _nablaB[i] = Vector<double>.Build.Sparse(length: this.Network.Biases[index: i].Count, value: 0);
+            _nablaB[i] = Vector<double>.Build.Sparse(length: this.Network.Biases[index: i].Count,
+                value: 0);
         }
 
         // Do same for weights
         for (var i = 0; i < this.Network.Weights.Count; i++)
         {
             _nablaW[i] = Matrix<double>.Build.Sparse(rows: this.Network.Weights[index: i].RowCount,
-                columns: this.Network.Weights[index: i].ColumnCount, value: 0);
+                columns: this.Network.Weights[index: i].ColumnCount,
+                value: 0);
         }
 
         // We get the delta for each pair in the batch, but don't update the network's weights
@@ -273,7 +286,8 @@ public class NetworkTrainer
         foreach (var pair in batch)
         {
             // Item 1 is for biases, item2 for weights
-            var _deltas = this.BackPropogation(input: pair.Item1, expectedOutput: pair.Item2);
+            var _deltas = this.BackPropogation(input: pair.Item1,
+                expectedOutput: pair.Item2);
 
             // We'll lock this just to be safe during the vector addition
             lock (this._sync)
